@@ -30,7 +30,13 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. The skill detects which of GitHub, Jira, Slack, and Calendar MCPs are available and communicates which signals will be absent
   4. All state files (`config.json`, `people/<name>.json`, `baselines.json`) have documented schemas with `schema_version` fields
   5. `.team-health/` is gitignored by default; `SIGNALS.md`, `BASELINES.md`, `PRIVACY.md`, and `SKILL.md` exist and are readable
-**Plans**: TBD
+**Plans**: 4 plans
+
+Plans:
+- [ ] 01-00-PLAN.md — Wave 0 scaffolding: smoke test checklist + canonical state schemas
+- [ ] 01-01-PLAN.md — Setup command: /team-health:setup with MCP detection, roster collection, config.json write, gitignore guard
+- [ ] 01-02-PLAN.md — Reference docs: SIGNALS.md, BASELINES.md, PRIVACY.md
+- [ ] 01-03-PLAN.md — Installation guide: top-level SKILL.md
 
 ### Phase 2: People Log
 **Goal**: Managers can record and query longitudinal notes about each direct report — the memory layer that 1:1 prep and commitment tracking depend on
@@ -84,7 +90,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/TBD | Not started | - |
+| 1. Foundation | 0/4 | Not started | - |
 | 2. People Log | 0/TBD | Not started | - |
 | 3. Team Pulse | 0/TBD | Not started | - |
 | 4. 1:1 Prep | 0/TBD | Not started | - |
