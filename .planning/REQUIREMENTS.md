@@ -9,11 +9,11 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Setup & Infrastructure
 
-- [ ] **SETUP-01**: Skill detects which MCP sources are available (GitHub, Jira, Slack, Calendar) on first command invocation and reports capability gaps
-- [ ] **SETUP-02**: First-run setup flow collects team roster (names, roles, 1:1 cadence) and stores in `.team-health/config.json`
-- [ ] **SETUP-03**: All commands check `config.json: setup_complete` gate before executing and route to setup if not configured
-- [ ] **SETUP-04**: State file schemas defined with `schema_version` fields for `config.json`, `people/<name>.json`, `baselines.json`
-- [ ] **SETUP-05**: `.team-health/` directory is gitignored by default to prevent accidental commit of people data
+- [x] **SETUP-01**: Skill detects which MCP sources are available (GitHub, Jira, Slack, Calendar) on first command invocation and reports capability gaps
+- [x] **SETUP-02**: First-run setup flow collects team roster (names, roles, 1:1 cadence) and stores in `.team-health/config.json`
+- [x] **SETUP-03**: All commands check `config.json: setup_complete` gate before executing and route to setup if not configured
+- [x] **SETUP-04**: State file schemas defined with `schema_version` fields for `config.json`, `people/<name>.json`, `baselines.json`
+- [x] **SETUP-05**: `.team-health/` directory is gitignored by default to prevent accidental commit of people data
 
 ### Shared Reference Docs
 
@@ -116,11 +116,11 @@ Which phases cover which requirements. Confirmed during roadmap creation (2026-0
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SETUP-01 | Phase 1 | Pending |
-| SETUP-02 | Phase 1 | Pending |
-| SETUP-03 | Phase 1 | Pending |
-| SETUP-04 | Phase 1 | Pending |
-| SETUP-05 | Phase 1 | Pending |
+| SETUP-01 | Phase 1 | Complete |
+| SETUP-02 | Phase 1 | Complete |
+| SETUP-03 | Phase 1 | Complete |
+| SETUP-04 | Phase 1 | Complete |
+| SETUP-05 | Phase 1 | Complete |
 | REF-01 | Phase 1 | Pending |
 | REF-02 | Phase 1 | Pending |
 | REF-03 | Phase 1 | Pending |
