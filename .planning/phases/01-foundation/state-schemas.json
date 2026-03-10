@@ -1,0 +1,118 @@
+{
+  "_note": "Canonical state schemas for team-health skill. Locked in Phase 1. Schema changes require schema_version bump and migration note.",
+  "_locked": "2026-03-10",
+  "config": {
+    "description": "Stored at .team-health/config.json. Written by /team-health:setup. Read by all commands as the setup gate.",
+    "required_for_setup_complete": ["schema_version", "setup_complete", "team", "sources", "github_org"],
+    "example": {
+      "schema_version": "1",
+      "setup_complete": true,
+      "created": "2026-03-10",
+      "last_updated": "2026-03-10",
+      "manager": {
+        "name": "Jordan Lee",
+        "github_username": "jlee",
+        "timezone": "America/New_York"
+      },
+      "team": [
+        {
+          "name": "Alice Chen",
+          "slug": "alice-chen",
+          "role": "Senior Engineer",
+          "github_username": "achen",
+          "jira_user_id": "alice@company.com",
+          "slack_user_id": "U0123ALICE",
+          "1on1_cadence_weeks": 1,
+          "start_date": "2024-06-01"
+        }
+      ],
+      "sources": {
+        "github": true,
+        "jira": false,
+        "slack": true,
+        "calendar": false
+      },
+      "baseline_window_weeks": 8,
+      "github_org": "acme-corp",
+      "sprint_cadence_weeks": 2,
+      "last_skip_level": null
+    }
+  },
+  "person": {
+    "description": "Stored at .team-health/people/<slug>.json. Written by /team-health:log. Read by /team-health:prep.",
+    "required_fields": ["schema_version", "name", "slug", "entries"],
+    "valid_categories": ["feedback-given", "feedback-received", "career", "commitment", "concern", "win", "note"],
+    "example": {
+      "schema_version": "1",
+      "name": "Alice Chen",
+      "slug": "alice-chen",
+      "created": "2026-03-10",
+      "last_updated": "2026-03-15",
+      "entries": [
+        {
+          "id": "2026-03-15-001",
+          "date": "2026-03-15",
+          "category": "feedback-given",
+          "content": "Gave specific positive feedback on the auth refactor PR — clean API design.",
+          "tags": ["technical", "positive"],
+          "created_at": "2026-03-15T14:32:00Z"
+        }
+      ],
+      "open_commitments": [
+        {
+          "id": "2026-03-15-002",
+          "date": "2026-03-15",
+          "content": "Will connect Alice with the platform team lead by end of month.",
+          "status": "open"
+        }
+      ],
+      "career_context": {
+        "stated_goals": ["Staff Engineer track", "More system design ownership"],
+        "last_promo_discussion": "2026-01-20",
+        "notes": ""
+      }
+    }
+  },
+  "baselines": {
+    "description": "Stored at .team-health/baselines.json. Written by /team-health:pulse after each run. Read by /team-health:prep and /team-health:pulse.",
+    "required_fields": ["schema_version", "last_updated", "people"],
+    "example": {
+      "schema_version": "1",
+      "last_updated": "2026-03-10",
+      "people": {
+        "alice-chen": {
+          "computed_from": "2025-12-01",
+          "computed_to": "2026-02-23",
+          "source": ["github", "jira"],
+          "window_weeks": 8,
+          "metrics": {
+            "github_prs_merged_per_week": {
+              "window": [2, 3, 1, 2, 2, 3, 2, 2],
+              "mean": 2.125,
+              "stddev": 0.6,
+              "last_value": 2
+            },
+            "github_pr_review_count_per_week": {
+              "window": [4, 5, 3, 4, 5, 4, 4, 5],
+              "mean": 4.25,
+              "stddev": 0.7,
+              "last_value": 4
+            },
+            "github_commit_days_per_week": {
+              "window": [4, 5, 4, 4, 3, 5, 4, 4],
+              "mean": 4.125,
+              "stddev": 0.6,
+              "last_value": 4
+            },
+            "jira_tickets_closed_per_week": {
+              "window": [3, 2, 3, 4, 3, 2, 3, 3],
+              "mean": 2.875,
+              "stddev": 0.6,
+              "last_value": 3
+            }
+          }
+        }
+      }
+    }
+  }
+}
