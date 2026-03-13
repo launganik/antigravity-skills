@@ -47,7 +47,11 @@ Plans:
   2. Opening the log shows the last 3-5 entries as context before prompting for new input
   3. Manager can ask natural language queries ("when did I last discuss promotion with Alex?") and get accurate answers from the log
   4. Running the log command for a person with no existing log creates the file gracefully without errors
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 02-00-PLAN.md — Wave 0: phase-2 smoke test document (manual test scenarios for LOG-01 through LOG-06)
+- [ ] 02-01-PLAN.md — /team-health:log command: append + query modes, Pre-flight Check, name resolution, category inference, commitment dual-write
 
 ### Phase 3: Team Pulse
 **Goal**: Managers can run a weekly team health scan that scores each person against their personal 8-week baseline, flags anomalies conservatively, and stores baselines and pulse history for downstream commands
@@ -91,7 +95,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 4/4 | Complete   | 2026-03-11 |
-| 2. People Log | 0/TBD | Not started | - |
+| 2. People Log | 0/2 | Not started | - |
 | 3. Team Pulse | 0/TBD | Not started | - |
 | 4. 1:1 Prep | 0/TBD | Not started | - |
 | 5. Skip-Level and Retro Prep | 0/TBD | Not started | - |
