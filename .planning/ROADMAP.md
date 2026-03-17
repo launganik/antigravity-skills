@@ -16,7 +16,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: People Log** - `/team-health:log` command — the memory layer all other commands consume (completed 2026-03-13)
 - [x] **Phase 3: Team Pulse** - `/team-health:pulse` with baseline computation and storage (completed 2026-03-17)
 - [x] **Phase 4: 1:1 Prep** - `/team-health:prep` synthesizing people log and baselines (completed 2026-03-17)
-- [ ] **Phase 5: Skip-Level and Retro Prep** - `/team-health:skip-level` and `/team-health:retro-prep` consuming pulse history
+- [x] **Phase 5: Skip-Level and Retro Prep** - `/team-health:skip-level` and `/team-health:retro-prep` consuming pulse history (completed 2026-03-17)
 
 ## Phase Details
 
@@ -111,4 +111,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 2. People Log | 2/2 | Complete   | 2026-03-13 |
 | 3. Team Pulse | 2/2 | Complete   | 2026-03-17 |
 | 4. 1:1 Prep | 2/2 | Complete   | 2026-03-17 |
-| 5. Skip-Level and Retro Prep | 2/3 | In Progress|  |
+| 5. Skip-Level and Retro Prep | 3/3 | Complete   | 2026-03-17 |
