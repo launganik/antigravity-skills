@@ -93,7 +93,12 @@ Plans:
   2. The skip-level output passes the "would I be comfortable if my entire team saw this?" test by design
   3. Manager can run `/team-health:retro-prep` and receive a retro agenda seeded with sprint facts and discussion prompts attributed to work items, never to individuals
   4. Retro output preserves blank space for team conversation — data seeds the agenda, it does not fill it
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 05-00-PLAN.md — Wave 0: phase-5 smoke test document (manual test scenarios for SKIP-01 through SKIP-05, RETRO-01 through RETRO-04)
+- [ ] 05-01-PLAN.md — /team-health:skip-level command: privacy-gated team brief with pulse history aggregation, anonymized themes, lookback window, last_skip_level state write
+- [ ] 05-02-PLAN.md — /team-health:retro-prep command: sprint retro agenda with work-item-attributed seeds, blank discussion space + SKILL.md update
 
 ## Progress
 
@@ -106,4 +111,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 2. People Log | 2/2 | Complete   | 2026-03-13 |
 | 3. Team Pulse | 2/2 | Complete   | 2026-03-17 |
 | 4. 1:1 Prep | 2/2 | Complete   | 2026-03-17 |
-| 5. Skip-Level and Retro Prep | 0/TBD | Not started | - |
+| 5. Skip-Level and Retro Prep | 0/3 | Not started | - |
