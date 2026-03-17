@@ -52,7 +52,7 @@ The skill works without any MCP sources — you will just have fewer signals. Gi
 
    ```bash
    ls .claude/commands/team-health/
-   # Should show: setup.md (and others as they are added)
+   # Should show: setup.md log.md pulse.md prep.md skip-level.md retro-prep.md
    ```
 
 3. Open Claude Code in your project directory and run first-time setup:
@@ -112,8 +112,6 @@ Append a note to a direct report's people log. Structures free-form input into d
 
 **Requires:** Setup complete. Creates `people/<slug>.json` on first use.
 
-**Status:** Phase 2 (not yet available)
-
 ---
 
 ### `/team-health:pulse`
@@ -125,8 +123,6 @@ Weekly team health scan. Scores each person against their personal 8-week baseli
 **Output:** Summary table (green/yellow/red per person) + detail sections for flagged individuals
 
 **Requires:** Setup complete. GitHub MCP strongly recommended.
-
-**Status:** Phase 3 (not yet available)
 
 ---
 
@@ -140,8 +136,6 @@ Generate a 2-minute prep sheet for an upcoming 1:1. Synthesizes live tool signal
 
 **Requires:** Setup complete. Pulse run at least once recommended.
 
-**Status:** Phase 4 (not yet available)
-
 ---
 
 ### `/team-health:skip-level`
@@ -154,8 +148,6 @@ Generate an upward-facing team brief. Aggregates team-level themes — individua
 
 **Requires:** Setup complete. Pulse history.
 
-**Status:** Phase 5 (not yet available)
-
 ---
 
 ### `/team-health:retro-prep`
@@ -165,8 +157,6 @@ Generate a data-seeded sprint retro agenda. Discussion seeds are attributed to w
 **Syntax:** `/team-health:retro-prep`
 
 **Requires:** Setup complete. Jira MCP recommended.
-
-**Status:** Phase 5 (not yet available)
 
 ---
 
