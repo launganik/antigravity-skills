@@ -33,16 +33,16 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Team Pulse (`/team-health:pulse`)
 
-- [ ] **PULSE-01**: `/team-health:pulse` scans all configured direct reports and produces a team-level health dashboard
-- [ ] **PULSE-02**: Per-person signal scoring uses personal 8-week rolling baseline (not team averages) — flags changes, not absolute values
-- [ ] **PULSE-03**: Signals tracked: commit/PR frequency, review participation, Jira velocity, meeting density (if Calendar available), Slack activity shift (if Slack available)
-- [ ] **PULSE-04**: Flags are conservative: fires only when 2+ signals align OR a single signal exceeds 2 standard deviations from personal baseline
-- [ ] **PULSE-05**: Dashboard output includes summary table (green/yellow/red per person) and per-person detail sections for flagged individuals only
-- [ ] **PULSE-06**: Every flagged signal states the specific metric, delta, and source: "PR review lag: +3.2 days vs. 8-week avg" — never opaque scores
-- [ ] **PULSE-07**: Disclaimer included in every pulse output: "These signals are indicators, not diagnoses. Always talk to your people before drawing conclusions."
-- [ ] **PULSE-08**: Computed baselines stored in `.team-health/baselines.json` with `computed_from`, `source`, and `schema_version` provenance fields after each pulse run
-- [ ] **PULSE-09**: Pulse history snapshots written to `.team-health/pulse-history/YYYY-WNN.md`
-- [ ] **PULSE-10**: Pulse degrades gracefully: operates on available MCP sources, names which signals are unavailable and why
+- [x] **PULSE-01**: `/team-health:pulse` scans all configured direct reports and produces a team-level health dashboard
+- [x] **PULSE-02**: Per-person signal scoring uses personal 8-week rolling baseline (not team averages) — flags changes, not absolute values
+- [x] **PULSE-03**: Signals tracked: commit/PR frequency, review participation, Jira velocity, meeting density (if Calendar available), Slack activity shift (if Slack available)
+- [x] **PULSE-04**: Flags are conservative: fires only when 2+ signals align OR a single signal exceeds 2 standard deviations from personal baseline
+- [x] **PULSE-05**: Dashboard output includes summary table (green/yellow/red per person) and per-person detail sections for flagged individuals only
+- [x] **PULSE-06**: Every flagged signal states the specific metric, delta, and source: "PR review lag: +3.2 days vs. 8-week avg" — never opaque scores
+- [x] **PULSE-07**: Disclaimer included in every pulse output: "These signals are indicators, not diagnoses. Always talk to your people before drawing conclusions."
+- [x] **PULSE-08**: Computed baselines stored in `.team-health/baselines.json` with `computed_from`, `source`, and `schema_version` provenance fields after each pulse run
+- [x] **PULSE-09**: Pulse history snapshots written to `.team-health/pulse-history/YYYY-WNN.md`
+- [x] **PULSE-10**: Pulse degrades gracefully: operates on available MCP sources, names which signals are unavailable and why
 
 ### 1:1 Prep (`/team-health:prep`)
 
@@ -131,16 +131,16 @@ Which phases cover which requirements. Confirmed during roadmap creation (2026-0
 | LOG-04 | Phase 2 | Complete |
 | LOG-05 | Phase 2 | Complete |
 | LOG-06 | Phase 2 | Complete |
-| PULSE-01 | Phase 3 | Pending |
-| PULSE-02 | Phase 3 | Pending |
-| PULSE-03 | Phase 3 | Pending |
-| PULSE-04 | Phase 3 | Pending |
-| PULSE-05 | Phase 3 | Pending |
-| PULSE-06 | Phase 3 | Pending |
-| PULSE-07 | Phase 3 | Pending |
-| PULSE-08 | Phase 3 | Pending |
-| PULSE-09 | Phase 3 | Pending |
-| PULSE-10 | Phase 3 | Pending |
+| PULSE-01 | Phase 3 | Complete |
+| PULSE-02 | Phase 3 | Complete |
+| PULSE-03 | Phase 3 | Complete |
+| PULSE-04 | Phase 3 | Complete |
+| PULSE-05 | Phase 3 | Complete |
+| PULSE-06 | Phase 3 | Complete |
+| PULSE-07 | Phase 3 | Complete |
+| PULSE-08 | Phase 3 | Complete |
+| PULSE-09 | Phase 3 | Complete |
+| PULSE-10 | Phase 3 | Complete |
 | PREP-01 | Phase 4 | Pending |
 | PREP-02 | Phase 4 | Pending |
 | PREP-03 | Phase 4 | Pending |
