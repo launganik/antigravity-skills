@@ -186,7 +186,7 @@ If `sources.calendar` is false in config.json, skip all signals in this section 
 **Source:** Calendar MCP
 **What it measures:** Percentage of working hours (Monday–Friday, 9:00 AM–6:00 PM in this person's timezone, or the manager's timezone if the person's is not known) occupied by meetings in the past 7 calendar days.
 **How to compute it:**
-1. Query the Calendar MCP for all calendar events in the past 7 days where this person is a confirmed attendee.
+1. Query the Calendar MCP for events on the **primary calendar only** in the past 7 days where this person is a confirmed attendee. Exclude shared, subscribed, and delegated calendars - these inflate meeting load with events the person may not actually attend.
 2. Calculate total available working minutes: 5 days × 9 hours × 60 minutes = 2,700 minutes.
 3. Sum the duration of all meeting events that fall within the 9:00 AM–6:00 PM window (clip events that extend outside this window).
 4. Compute `meeting_load_percent = (total_meeting_minutes / 2700) * 100`.
@@ -203,7 +203,7 @@ If `sources.calendar` is false in config.json, skip all signals in this section 
 **What it measures:** Whether the manager's scheduled 1:1 with this person occurred within the expected window based on their configured `1on1_cadence_weeks`.
 **How to compute it:**
 1. From config.json, read this person's `1on1_cadence_weeks` (default: 1 week if not specified).
-2. Query the Calendar MCP for calendar events containing this person and the manager as attendees, with a title matching a 1:1 pattern (e.g., "1:1", "1on1", person's name).
+2. Query the Calendar MCP for events on the **primary calendar only** containing this person and the manager as attendees, with a title matching a 1:1 pattern (e.g., "1:1", "1on1", person's name).
 3. Determine the expected 1:1 window: the meeting should have occurred within the last `1on1_cadence_weeks * 7` days.
 4. Check if any matching event occurred within that window.
 
