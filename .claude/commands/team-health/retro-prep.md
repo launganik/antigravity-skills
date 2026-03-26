@@ -100,7 +100,7 @@ Scope to the project(s) associated with this team.
 - Sprint velocity: count of tickets closed vs. count planned at sprint start.
 - Carry-over count: tickets that were started but not closed within the sprint window.
 - Blocked tickets at sprint end: count and ticket summaries. Do NOT include assignee names.
-- Tickets in progress for more than 2 sprints: count only.
+- Tickets in progress for more than 2 sprints: count only. Calculate time in progress from the status transition date (when ticket moved to In Progress via changelog), NOT from the ticket creation date.
 
 CRITICAL: Do NOT query per-person breakdowns. All Jira queries are team-scoped or work-item-scoped.
 

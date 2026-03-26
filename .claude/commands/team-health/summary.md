@@ -1,7 +1,7 @@
 ---
 description: "Read-only person profile: career goals, open commitments, signal trends, log history, and tenure — no state writes."
 argument-hint: "<name>"
-allowed-tools: Read, Bash(date +%Y-%m-%d), Bash(ls .team-health/pulse-history/)
+allowed-tools: Read, Bash(date +%Y-%m-%d), Bash(ls .team-health/pulse-history/), Bash(gh api *)
 disable-model-invocation: true
 ---
 
@@ -91,14 +91,39 @@ If pulse history exists:
 
 If no pulse history: note "No pulse history available."
 
-### A5 - Confluence activity (if sources include confluence)
+### A5 - Live GitHub signals (if sources include github)
+
+If `sources.github` is true in config.json, fetch current-week GitHub data for this person so that GitHub signals always appear in the Signal Trends section -- even if baselines.json has no GitHub history.
+
+Check `sources.github_method` in config.json. If "cli" or absent, use `gh api` commands. If "mcp", use GitHub MCP tools.
+
+**Using gh CLI (preferred):**
+
+Compute `7_days_ago` as YYYY-MM-DD from the injected current date.
+
+- **github_prs_merged_per_week:** Run:
+  `gh api "search/issues?q=author:{github_username}+org:{github_org}+is:pr+is:merged+merged:>={7_days_ago}&per_page=100" --jq '.total_count'`
+
+- **github_pr_review_count_per_week:** Run:
+  `gh api "search/issues?q=reviewed-by:{github_username}+org:{github_org}+is:pr+updated:>={7_days_ago}&per_page=100" --jq '.total_count'`
+
+- **github_commit_days_per_week:** Run:
+  `gh api "search/commits?q=author:{github_username}+org:{github_org}+committer-date:>={7_days_ago}&per_page=100" --jq '[.items[].commit.committer.date[:10]] | unique | length'`
+
+Store results as live GitHub signals. These will be rendered in the Signal Trends table alongside baseline data. If baselines.json also has GitHub metrics for this person, include both the live current value and the baseline avg/trend. If baselines.json has no GitHub metrics, show the live value with "no baseline" noted.
+
+If `sources.github` is false: note in output that GitHub signals are unavailable.
+
+### A6 - Confluence activity (if sources include confluence)
 
 If the config.json sources object contains `confluence: true` (or if Atlassian/Confluence MCP tools are available):
-1. Query for pages authored by this person in the last 30 days (by display name or account ID).
-2. Query for pages where this person commented in the last 30 days.
-3. Query for pages where this person is @-mentioned in the last 30 days.
-4. Aggregate: "N pages authored, M pages commented on, P pages mentioned in"
+1. Query for pages authored/edited by this person in the last 30 days (by Atlassian account ID from `jira_user_id`, using CQL: `contributor = "<jira_user_id>" AND type = page AND lastModified >= now("-30d")`).
+2. Query for comments created by this person in the last 30 days (CQL: `creator = "<jira_user_id>" AND type = comment AND created >= now("-30d")`).
+3. Query for pages where this person is @-mentioned in the last 30 days (CQL: `type = page AND text ~ "<display_name>" AND lastModified >= now("-30d")`).
+4. Aggregate: "N pages authored/edited, M comments, P pages mentioned in"
 5. List up to 5 most recent page titles (no content, titles only).
+
+These will be rendered in the Signal Trends section alongside other metrics.
 
 If Confluence MCP is not available: note "Confluence signals unavailable - Atlassian MCP not configured."
 
@@ -154,26 +179,34 @@ Render the following profile. Output ALL of this. Make NO state writes afterward
 
 ## 4. Signal Trends (8-Week Baseline)
 
-[If baseline data exists, render a table:]
+Render a unified signal trends table that always includes GitHub and Confluence data when the source is available, alongside any baseline metrics from baselines.json.
 
 | Signal | Current | 8-Wk Avg | Trend | Window |
 |--------|---------|-----------|-------|--------|
-[One row per metric with data. Current = last_value, 8-Wk Avg = mean (±stddev), Trend = trending up/stable/trending down, Window = N weeks]
+[Baseline metrics first: one row per metric from baselines.json with data. Current = last_value, 8-Wk Avg = mean (+/-stddev), Trend = trending up/stable/trending down, Window = N weeks]
+[GitHub live signals from A5: one row per GitHub metric collected. Current = live value from this week's query. If baselines.json also has this metric, show 8-Wk Avg and Trend from baseline. If no baseline exists for this metric, show "no baseline" in 8-Wk Avg and Trend columns.]
+[Confluence signals from A6: render as rows in the table:]
+- Confluence pages authored/edited (30d) | [N] | [baseline or "no baseline"] | [trend or "-"] | 30d
+- Confluence comments (30d) | [M] | [baseline or "no baseline"] | [trend or "-"] | 30d
+- Confluence mentions (30d) | [P] | [baseline or "no baseline"] | [trend or "-"] | 30d
 
-[After the table, render the flag history:]
+[If a source is unavailable (sources.github = false, sources.confluence = false), note below the table:]
+[e.g., "GitHub signals unavailable - GitHub MCP/CLI not configured. PR and commit data not included."]
+
+[If no baseline data exists AND no live signals could be fetched:]
+*No signal data available. Run /team-health:pulse weekly to build trend data.*
+
+[After the table, if Confluence data exists from A6, list recent pages:]
+**Recent Confluence pages:**
+[list up to 5 titles with space name and date]
+
+[After Confluence pages (or after the table if no Confluence data), render the flag history:]
 **Recent pulse flags:**
 [List from Phase A4, e.g.:]
 - W13: GREEN (no flags)
-- W12: YELLOW — PR review lag elevated
+- W12: YELLOW - PR review lag elevated
 - W11: GREEN (no flags)
-- W10: RED — commit days and PR review count both dropped
-
-[If no baseline data:]
-*No signal baseline established. Run /team-health:pulse weekly to build trend data.*
-
-[If Confluence data exists from A5:]
-**Confluence activity (last 30 days):** [N] pages authored, [M] commented on, [P] mentioned in
-Recent pages: [list up to 5 titles]
+- W10: RED - commit days and PR review count both dropped
 
 ---
 

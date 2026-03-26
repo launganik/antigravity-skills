@@ -85,7 +85,7 @@ For each team member in config.json team array (iterate in order):
   ### Jira signals (if sources.jira is true):
   Query the Jira MCP for this person's jira_user_id:
   - jira_tickets_closed_per_week: count of tickets resolved/closed by this person this week
-  - jira_tickets_in_progress_over_2_sprints: count of tickets assigned to this person that have been "in progress" for more than 2 sprint cycles (absolute threshold from SIGNALS.md - check window length before flagging as absolute threshold)
+  - jira_tickets_in_progress_over_2_sprints: count of tickets assigned to this person that have been "in progress" for more than 2 sprint cycles (absolute threshold from SIGNALS.md - check window length before flagging as absolute threshold). IMPORTANT: Calculate time in progress from when the ticket transitioned into "In Progress" status (via changelog/history), NOT from the ticket creation date.
   - jira_blocked_tickets: count of tickets assigned to this person with a "blocked" or impediment status
 
   Scope to the project(s) associated with this team, using JQL where supported.

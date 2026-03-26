@@ -112,8 +112,9 @@ If `sources.jira` is false in config.json, skip all signals in this section and 
 **How to compute it:**
 1. Query the Jira MCP for all In Progress tickets assigned to this person.
 2. Determine the sprint duration from `sprint_cadence_weeks` in config.json (default: 2 weeks). Two sprint cycles = `sprint_cadence_weeks * 2 * 7` days.
-3. For each In Progress ticket, compute how many days it has been in the In Progress status.
-4. Count tickets where `days_in_progress > (sprint_cadence_weeks * 2 * 7)`.
+3. For each In Progress ticket, determine when it entered the In Progress status by querying the ticket's changelog/history for the status transition away from To Do (or the first transition into In Progress). Do NOT use the ticket's creation date - a ticket may sit in To Do for weeks before being started.
+4. Compute `days_in_progress = today - date_transitioned_to_in_progress`.
+5. Count tickets where `days_in_progress > (sprint_cadence_weeks * 2 * 7)`.
 
 **Flag threshold:**
 - Flag if `count >= 1` (absolute threshold - any stuck ticket is worth surfacing)

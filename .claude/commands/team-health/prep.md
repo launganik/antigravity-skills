@@ -108,7 +108,7 @@ Use whichever tools are available from GitHub MCP - probe by namespace (any tool
 
 ### Jira signals (if sources.jira is true):
 - `jira_tickets_closed`: count closed since lookback_start
-- `jira_tickets_in_progress_over_2_sprints`: count (absolute threshold, no lookback needed)
+- `jira_tickets_in_progress_over_2_sprints`: count (absolute threshold, no lookback needed). IMPORTANT: Calculate time in progress from when the ticket transitioned into "In Progress" status (via changelog/history), NOT from the ticket creation date.
 - `jira_blocked_tickets`: count (absolute threshold, no lookback needed)
 
 Scope to project(s) for this team using JQL where supported.
