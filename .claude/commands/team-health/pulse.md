@@ -1,7 +1,7 @@
 ---
 description: "Weekly team health pulse - scans all direct reports, scores signals against personal baselines, and produces a flagged team dashboard."
 argument-hint: ""
-allowed-tools: Read, Write, Bash(date +%Y-%m-%d), Bash(date +%Y-W%V), Bash(mkdir -p .team-health/pulse-history)
+allowed-tools: Read, Write, Bash(date +%Y-%m-%d), Bash(date +%Y-W%V), Bash(mkdir -p .team-health/pulse-history), Bash(gh api *)
 disable-model-invocation: true
 ---
 
@@ -47,6 +47,31 @@ For each team member in config.json team array (iterate in order):
 
   ### GitHub signals (if sources.github is true):
   Scope ALL GitHub queries to the github_org field from config.json. Do not query across all of GitHub.
+
+  Check `sources.github_method` in config.json to determine how to fetch data:
+
+  **If github_method is "cli" (preferred - uses `gh` CLI):**
+
+  Use the `gh api` command via Bash to query GitHub's REST/Search API. All queries are scoped to the org.
+
+  - **github_prs_merged_per_week:** Run:
+    `gh api "search/issues?q=author:{github_username}+org:{github_org}+is:pr+is:merged+merged:>={7_days_ago_YYYY-MM-DD}&per_page=100" --jq '.total_count'`
+
+  - **github_pr_review_count_per_week:** Run:
+    `gh api "search/issues?q=reviewed-by:{github_username}+org:{github_org}+is:pr+updated:>={7_days_ago_YYYY-MM-DD}&per_page=100" --jq '.total_count'`
+
+  - **github_pr_review_lag_days:** Run:
+    `gh api "search/issues?q=author:{github_username}+org:{github_org}+is:pr+created:>={7_days_ago_YYYY-MM-DD}&per_page=100" --jq '.items[] | {number, created_at, repo: .repository_url}'`
+    Then for each PR, fetch its reviews to find the first review date and compute the lag. If no PRs, use 0.
+    Also check for absolute threshold: any open PR by this person with no reviews after 48h.
+
+  - **github_commit_days_per_week:** Run:
+    `gh api "search/commits?q=author:{github_username}+org:{github_org}+committer-date:>={7_days_ago_YYYY-MM-DD}&per_page=100" --jq '[.items[].commit.committer.date[:10]] | unique | length'`
+
+  Date format for queries: YYYY-MM-DD. Compute 7_days_ago from the injected current date.
+
+  **If github_method is "mcp" (fallback - uses GitHub MCP tools):**
+
   Query the GitHub MCP for this person's github_username over the past 7 days (current week):
   - github_prs_merged_per_week: count of PRs merged by this person in github_org this week
   - github_pr_review_count_per_week: count of PR reviews submitted by this person in github_org this week
@@ -54,6 +79,8 @@ For each team member in config.json team array (iterate in order):
   - github_commit_days_per_week: count of distinct calendar days with at least one commit by this person in github_org this week
 
   Use whichever commit-listing and PR-listing tools are available from the GitHub MCP - probe by namespace (any tool containing 'github' or starting with 'mcp_github'). Adapt tool names to what the manager has installed.
+
+  **If github_method is absent or null:** treat as "cli" if `gh auth status` succeeds, otherwise treat as "mcp".
 
   ### Jira signals (if sources.jira is true):
   Query the Jira MCP for this person's jira_user_id:

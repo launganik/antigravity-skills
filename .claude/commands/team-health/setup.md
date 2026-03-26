@@ -1,7 +1,7 @@
 ---
 description: "First-time setup for team-health skill. Collects team roster, 1:1 cadence, and detects available MCP sources. Run once per manager before using any other team-health command."
 argument-hint: ""
-allowed-tools: Read, Write, Bash(git status), Bash(cat .gitignore), Bash(echo)
+allowed-tools: Read, Write, Bash(git status), Bash(cat .gitignore), Bash(echo), Bash(gh auth status)
 disable-model-invocation: true
 ---
 
@@ -23,7 +23,7 @@ If `$ARGUMENTS` contains `--reset`, skip this check and proceed to Step 1 even i
 
 Detect which MCP sources are available by attempting minimal tool calls for each source. Because MCP server implementations vary, probe by namespace rather than specific tool name.
 
-**GitHub:** Attempt to call any tool whose name contains "github" or starts with "mcp_github". If any such tool is available and responds (even with an error that is NOT "tool not found" or "unknown tool"), set `github = true`. If no github-namespaced tool exists at all, set `github = false`.
+**GitHub:** First, check if the `gh` CLI is available by running `gh auth status`. If `gh` is authenticated, set `github = true` and `github_method = "cli"`. If `gh` is not available or not authenticated, attempt to call any tool whose name contains "github" or starts with "mcp_github". If any such tool is available and responds (even with an error that is NOT "tool not found" or "unknown tool"), set `github = true` and `github_method = "mcp"`. If neither `gh` CLI nor GitHub MCP is available, set `github = false`.
 
 **Jira:** Attempt to call any tool whose name contains "jira". If any such tool responds (even with a non-fatal error), set `jira = true`. If no jira-namespaced tool exists, set `jira = false`.
 
@@ -129,6 +129,7 @@ Fill in fields from the information collected in Steps 1–3:
   ],
   "sources": {
     "github": <true or false from Step 1>,
+    "github_method": "<'cli' or 'mcp' or null - how GitHub data is fetched>",
     "jira": <true or false from Step 1>,
     "slack": <true or false from Step 1>,
     "calendar": <true or false from Step 1>,

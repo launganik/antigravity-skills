@@ -110,7 +110,7 @@ When an MCP source is unavailable, state clearly what data is absent and why it 
 **Pattern:** "[Source] signals are unavailable - [MCP name] MCP is not configured. [What data cannot be included]."
 
 **Examples:**
-- "GitHub signals are unavailable - GitHub MCP is not configured. PR and commit data cannot be included."
+- "GitHub signals are unavailable - neither GitHub MCP nor gh CLI is configured. PR and commit data cannot be included."
 - "Jira signals are unavailable - Jira MCP is not configured. Ticket velocity and blocked-ticket data cannot be included."
 - "Slack signals are unavailable - Slack MCP is not configured. Channel participation and response latency cannot be included."
 - "Calendar signals are unavailable - Calendar MCP is not configured. Meeting load and 1:1 adherence cannot be checked."

@@ -1,7 +1,7 @@
 ---
 description: "Generate a sprint retro agenda seeded with sprint facts. Attributed to work items, never individuals."
 argument-hint: "[--sprint <sprint-id>]"
-allowed-tools: Read, Bash(date +%Y-%m-%d), Bash(date +%Y-W%V), Bash(ls .team-health/pulse-history/)
+allowed-tools: Read, Bash(date +%Y-%m-%d), Bash(date +%Y-W%V), Bash(ls .team-health/pulse-history/), Bash(gh api *)
 disable-model-invocation: true
 ---
 
@@ -65,6 +65,27 @@ Parse $ARGUMENTS for the --sprint flag:
 
 Scope ALL GitHub queries to github_org from config.json. Do not query across all of GitHub.
 
+Check `sources.github_method` in config.json to determine how to fetch data:
+
+**If github_method is "cli" or absent (preferred - uses `gh` CLI):**
+
+Use the `gh api` command via Bash. Replace `{github_org}`, `{sprint_start}`, and `{sprint_end}` with actual values.
+
+- **PRs merged in sprint window:** Run:
+  `gh api "search/issues?q=org:{github_org}+is:pr+is:merged+merged:{sprint_start}..{sprint_end}&per_page=100" --jq '.items[] | .title'`
+  Count and list titles. Do NOT include author names in the output.
+
+- **PRs with >3 revision cycles:** For each merged PR, check review count. List titles only where reviews > 3. No author names.
+
+- **PR review cycle time distribution:** For merged PRs, compute time from creation to merge. Report average and maximum. No per-person breakdowns.
+
+- **Reverted or hotfixed PRs:** Run:
+  `gh api "search/issues?q=org:{github_org}+is:pr+is:merged+merged:{sprint_start}..{sprint_end}+revert+OR+hotfix+in:title&per_page=100" --jq '.items[] | .title'`
+  List titles. No author names.
+
+**If github_method is "mcp" (fallback):**
+
+Use whichever GitHub MCP tools are available:
 - PRs merged in the sprint window: count and list titles. Do NOT include author names in the output.
 - PRs with >3 revision cycles (high review round-trips before merge): list titles only. No author names.
 - PR review cycle time distribution for the sprint window: average and maximum. No per-person breakdowns.

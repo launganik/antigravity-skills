@@ -10,13 +10,15 @@ Last updated: 2026-03-10
 
 ## Section 1: GitHub Signals
 
-If `sources.github` is false in config.json, skip all signals in this section and note: "GitHub signals are unavailable - GitHub MCP is not configured. PR and commit data cannot be included."
+If `sources.github` is false in config.json, skip all signals in this section and note: "GitHub signals are unavailable - neither GitHub MCP nor gh CLI is configured. PR and commit data cannot be included."
+
+> **Data source:** GitHub signals can be fetched via the `gh` CLI (preferred) or GitHub MCP tools. Check `sources.github_method` in config.json. When github_method is "cli" or absent, use `gh api` commands. When "mcp", use GitHub MCP tools. The signal definitions below apply regardless of which method is used.
 
 ---
 
 ### Signal: `github_prs_merged_per_week`
 
-**Source:** GitHub MCP
+**Source:** GitHub (via `gh` CLI or GitHub MCP)
 **What it measures:** Count of pull requests merged by this person in the past 7 calendar days.
 **How to compute it:**
 1. Query the GitHub MCP for all PRs merged in the past 7 days where the author matches this person's `github_username` (from config.json team array).
@@ -32,7 +34,7 @@ If `sources.github` is false in config.json, skip all signals in this section an
 
 ### Signal: `github_pr_review_count_per_week`
 
-**Source:** GitHub MCP
+**Source:** GitHub (via `gh` CLI or GitHub MCP)
 **What it measures:** Count of pull requests where this person left at least one review comment in the past 7 calendar days.
 **How to compute it:**
 1. Query the GitHub MCP for all PR review events in the past 7 days where the reviewer matches this person's `github_username`.
@@ -47,7 +49,7 @@ If `sources.github` is false in config.json, skip all signals in this section an
 
 ### Signal: `github_pr_review_lag_days`
 
-**Source:** GitHub MCP
+**Source:** GitHub (via `gh` CLI or GitHub MCP)
 **What it measures:** Average number of days between a PR being opened and this person leaving their first review comment, for PRs they reviewed in the past 14 calendar days.
 **How to compute it:**
 1. Query the GitHub MCP for PRs where this person submitted a review in the past 14 days.
@@ -68,7 +70,7 @@ If `sources.github` is false in config.json, skip all signals in this section an
 
 ### Signal: `github_commit_days_per_week`
 
-**Source:** GitHub MCP
+**Source:** GitHub (via `gh` CLI or GitHub MCP)
 **What it measures:** Count of distinct calendar days (Mon–Sun) in the past 7 days on which this person made at least one commit to any repository within the configured `github_org`.
 **How to compute it:**
 1. Query the GitHub MCP for all commits authored by this person's `github_username` in the past 7 days, scoped to the `github_org` from config.json.
@@ -327,10 +329,10 @@ When in doubt, do not flag. A false negative (missed flag) is preferable to a fa
 
 | Signal | Source | Required MCP | Available without MCP? |
 |--------|--------|--------------|------------------------|
-| `github_prs_merged_per_week` | GitHub | github | No |
-| `github_pr_review_count_per_week` | GitHub | github | No |
-| `github_pr_review_lag_days` | GitHub | github | No |
-| `github_commit_days_per_week` | GitHub | github | No |
+| `github_prs_merged_per_week` | GitHub | github (MCP or `gh` CLI) | Yes, via `gh` CLI |
+| `github_pr_review_count_per_week` | GitHub | github (MCP or `gh` CLI) | Yes, via `gh` CLI |
+| `github_pr_review_lag_days` | GitHub | github (MCP or `gh` CLI) | Yes, via `gh` CLI |
+| `github_commit_days_per_week` | GitHub | github (MCP or `gh` CLI) | Yes, via `gh` CLI |
 | `jira_tickets_closed_per_week` | Jira | jira | No |
 | `jira_tickets_in_progress_over_2_sprints` | Jira | jira | No |
 | `jira_blocked_tickets` | Jira | jira | No |

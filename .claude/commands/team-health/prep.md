@@ -1,7 +1,7 @@
 ---
 description: "Generate a 2-minute 1:1 prep sheet for a direct report: live signal snapshot, standing items from people log, and suggested talking points."
 argument-hint: "<name>"
-allowed-tools: Read, Write, Bash(date +%Y-%m-%d)
+allowed-tools: Read, Write, Bash(date +%Y-%m-%d), Bash(gh api *)
 disable-model-invocation: true
 ---
 
@@ -77,12 +77,34 @@ For each available source (skip entire source block if sources.<name> is false i
 
 ### GitHub signals (if sources.github is true):
 - Scope ALL queries to github_org from config.json. Do NOT query across all of GitHub.
-- `github_prs_merged`: count of PRs merged by this person since lookback_start
-- `github_pr_review_count`: count of PRs reviewed since lookback_start
-- `github_pr_review_lag_days`: average days from PR creation to first review for this person's authored PRs since lookback_start. Also check absolute threshold: any PR open >48h with no review.
-- `github_commit_days`: count of distinct calendar days with commits since lookback_start
+
+Check `sources.github_method` in config.json to determine how to fetch data:
+
+**If github_method is "cli" or absent (preferred - uses `gh` CLI):**
+
+Use the `gh api` command via Bash. Replace `{github_username}`, `{github_org}`, and `{lookback_start}` with actual values.
+
+- **github_prs_merged:** Run:
+  `gh api "search/issues?q=author:{github_username}+org:{github_org}+is:pr+is:merged+merged:>={lookback_start}&per_page=100" --jq '.total_count'`
+
+- **github_pr_review_count:** Run:
+  `gh api "search/issues?q=reviewed-by:{github_username}+org:{github_org}+is:pr+updated:>={lookback_start}&per_page=100" --jq '.total_count'`
+
+- **github_pr_review_lag_days:** Run:
+  `gh api "search/issues?q=author:{github_username}+org:{github_org}+is:pr+created:>={lookback_start}&per_page=100" --jq '.items[] | {number, created_at, repo: .repository_url}'`
+  Then for each PR, fetch its reviews to find the first review date and compute the lag.
+  Also check absolute threshold: any open PR by this person with no reviews after 48h.
+
+- **github_commit_days:** Run:
+  `gh api "search/commits?q=author:{github_username}+org:{github_org}+committer-date:>={lookback_start}&per_page=100" --jq '[.items[].commit.committer.date[:10]] | unique | length'`
+
+**If github_method is "mcp" (fallback):**
 
 Use whichever tools are available from GitHub MCP - probe by namespace (any tool containing 'github' or starting with 'mcp_github'). Adapt tool names to what is installed.
+- `github_prs_merged`: count of PRs merged by this person since lookback_start
+- `github_pr_review_count`: count of PRs reviewed since lookback_start
+- `github_pr_review_lag_days`: average days from PR creation to first review. Also check absolute threshold: any PR open >48h with no review.
+- `github_commit_days`: count of distinct calendar days with commits since lookback_start
 
 ### Jira signals (if sources.jira is true):
 - `jira_tickets_closed`: count closed since lookback_start
