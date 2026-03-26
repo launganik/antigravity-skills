@@ -42,11 +42,11 @@ The skill works without any MCP sources - you will just have fewer signals. GitH
 
    ```bash
    # Option A: Clone this repo into your project
-   git clone https://github.com/your-org/antigravity-skills .
+   git clone https://github.com/your-org/engineering-manager-skill .
 
    # Option B: Copy just the skill files
-   cp -r /path/to/antigravity-skills/.claude ./
-   cp /path/to/antigravity-skills/SKILL.md ./
+   cp -r /path/to/engineering-manager-skill/.claude ./
+   cp /path/to/engineering-manager-skill/SKILL.md ./
    ```
 
 2. Verify the command files are present:
@@ -245,8 +245,8 @@ All people data is stored locally in `.team-health/` and gitignored by default -
 Pull or copy new skill files over `.claude/commands/team-health/` and `.claude/team-health/`. Your `.team-health/` data is unaffected - it lives in your project directory and is not part of the skill install.
 
 ```bash
-cp -r /path/to/updated-antigravity-skills/.claude/commands/team-health/ .claude/commands/team-health/
-cp -r /path/to/updated-antigravity-skills/.claude/team-health/ .claude/team-health/
+cp -r /path/to/updated-engineering-manager-skill/.claude/commands/team-health/ .claude/commands/team-health/
+cp -r /path/to/updated-engineering-manager-skill/.claude/team-health/ .claude/team-health/
 ```
 
 ### Uninstalling

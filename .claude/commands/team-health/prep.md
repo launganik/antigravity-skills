@@ -119,9 +119,48 @@ PRIVACY CONSTRAINT: public channel metadata only. Do NOT request or use DM conte
 - `slack_response_latency`: median @-mention response time in public channels since lookback_start
 
 ### Calendar signals (if sources.calendar is true):
-Query **this person's own calendar** using their email as calendarId (e.g., `gcal_list_events(calendarId="firstname.lastname@forto.com")`). If the person has an `email` field in config.json, use that. Otherwise, derive from their name: lowercase `firstname.lastname@forto.com`. Only include events with 2+ real participants that were accepted or tentatively accepted.
-- `calendar_meeting_load_pct`: meeting percentage since lookback_start
-- `calendar_1on1_adherence`: was 1:1 held within expected cadence window? (query the **manager's primary calendar** for this signal, since it measures the manager-IC meeting)
+
+**Step 1 - Determine calendarId:**
+If the person has an `email` field in config.json, use that as calendarId. Otherwise, derive from their name: lowercase `firstname.lastname@{email_domain}` (email_domain from config.json, e.g., `forto.com`). Handle special characters by removing diacritics and non-ASCII characters.
+
+**Step 2 - Query the person's calendar:**
+Call `gcal_list_events` with these parameters:
+- `calendarId`: the email from Step 1 (e.g., `"lahiru.jayamanna@forto.com"`)
+- `timeMin`: `lookback_start` at `T00:00:00` (from Phase B lookback window)
+- `timeMax`: today at `T23:59:59`
+- `timeZone`: manager's timezone from config.json (e.g., `"Europe/Berlin"`)
+- `maxResults`: 250
+- `condenseEventDetails`: true
+
+If the response contains a `nextPageToken`, call again with `pageToken` to get remaining events. Continue until all events are retrieved.
+
+**Step 3 - Filter qualifying meetings:**
+For each event in the response, include it ONLY if ALL of these conditions are true:
+- `eventType` is `"default"` (exclude `workingLocation`, `outOfOffice`, `focusTime`)
+- `numAttendees` >= 2
+- `myResponseStatus` is `"accepted"` or `"tentative"` (exclude `"declined"`, `"needsAction"`, `"unknown"`, or missing)
+- The event has `start.dateTime` and `end.dateTime` fields (exclude pure all-day events that only have `start.date`/`end.date`)
+- The event duration is <= 480 minutes (8 hours). Events longer than 8 hours are multi-day placeholders (e.g., hackathons, conferences) and should be excluded from meeting load calculation
+
+**Step 4 - Compute meeting minutes within working hours:**
+Working hours window: 09:00 to 18:00 in the configured timezone, Monday-Friday only.
+Compute the number of weekdays between lookback_start and today. Total available working minutes = weekdays x 9 hours x 60 minutes.
+
+For each qualifying event:
+1. Parse `start.dateTime` and `end.dateTime` into timestamps
+2. Skip events that fall entirely on Saturday or Sunday
+3. Clip the event start to 09:00 if it starts before 09:00
+4. Clip the event end to 18:00 if it ends after 18:00
+5. If clipped start >= clipped end, the event is entirely outside working hours - skip it
+6. Compute `event_minutes = (clipped_end - clipped_start)` in minutes
+7. Sum all event_minutes into `total_meeting_minutes`
+
+**Step 5 - Compute meeting load percentage:**
+`calendar_meeting_load_pct = (total_meeting_minutes / total_available_working_minutes) * 100`
+Round to 1 decimal place.
+
+**Step 6 - 1:1 adherence (separate query):**
+`calendar_1on1_adherence`: was 1:1 held within expected cadence window? Query the **manager's primary calendar** (`calendarId="primary"`) for this signal, since it measures the manager-IC meeting.
 
 ### Confluence signals (if sources.confluence is true, or if Atlassian/Confluence MCP tools are available):
 These are informational signals — they do NOT participate in flag determination.

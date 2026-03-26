@@ -144,6 +144,53 @@ These will be rendered in the Signal Trends section alongside other metrics. If 
 
 If Confluence MCP is not available: note "Confluence signals unavailable - Atlassian MCP not configured."
 
+### A7 - Live calendar signals (if sources include calendar)
+
+If `sources.calendar` is true in config.json, fetch live calendar data for this person so that the calendar meeting load signal reflects current data rather than relying solely on the last pulse baseline.
+
+Determine the lookback start date:
+- If `FROM_DATE` is set: use `FROM_DATE` as `lookback_start`.
+- If `FROM_DATE` is null: compute `lookback_start` as 7 days before today.
+
+**Step 1 - Determine calendarId:**
+If the person has an `email` field in config.json, use that as calendarId. Otherwise, derive from their name: lowercase `firstname.lastname@{email_domain}` (email_domain from config.json, e.g., `forto.com`). Handle special characters by removing diacritics and non-ASCII characters.
+
+**Step 2 - Query the person's calendar:**
+Call `gcal_list_events` with these parameters:
+- `calendarId`: the email from Step 1 (e.g., `"lahiru.jayamanna@forto.com"`)
+- `timeMin`: `lookback_start` at `T00:00:00`
+- `timeMax`: today at `T23:59:59`
+- `timeZone`: manager's timezone from config.json (e.g., `"Europe/Berlin"`)
+- `maxResults`: 250
+- `condenseEventDetails`: true
+
+If the response contains a `nextPageToken`, call again with `pageToken` to get remaining events.
+
+**Step 3 - Filter qualifying meetings:**
+For each event, include it ONLY if ALL conditions are true:
+- `eventType` is `"default"` (exclude `workingLocation`, `outOfOffice`, `focusTime`)
+- `numAttendees` >= 2
+- `myResponseStatus` is `"accepted"` or `"tentative"` (exclude `"declined"`, `"needsAction"`, `"unknown"`, or missing)
+- The event has `start.dateTime` and `end.dateTime` fields (exclude pure all-day events)
+- The event duration is <= 480 minutes (8 hours) - exclude multi-day placeholders
+
+**Step 4 - Compute meeting minutes within working hours:**
+Working hours: 09:00 to 18:00, Monday-Friday only.
+Compute weekdays between lookback_start and today. Total available = weekdays x 540 minutes.
+
+For each qualifying event:
+1. Parse start/end dateTime
+2. Skip Saturday/Sunday events
+3. Clip start to 09:00 if earlier, clip end to 18:00 if later
+4. If clipped start >= clipped end, skip
+5. Sum clipped durations into total_meeting_minutes
+
+**Step 5 - Compute meeting load:**
+`calendar_meeting_load_pct = (total_meeting_minutes / total_available_minutes) * 100`, rounded to 1 decimal.
+
+If `FROM_DATE` was used, label the calendar signal as "since [FROM_DATE]".
+If `sources.calendar` is false: note "Calendar signals unavailable - Calendar MCP is not configured."
+
 ## Phase B - Output (5-section profile)
 
 Render the following profile. Output ALL of this. Make NO state writes afterward.
@@ -203,6 +250,7 @@ Render a unified signal trends table that always includes GitHub and Confluence 
 |--------|---------|-----------|-------|--------|
 [Baseline metrics first: one row per metric from baselines.json with data. Current = last_value, 8-Wk Avg = mean (+/-stddev), Trend = trending up/stable/trending down, Window = N weeks]
 [GitHub live signals from A5: one row per GitHub metric collected. Current = live value from this week's query. If baselines.json also has this metric, show 8-Wk Avg and Trend from baseline. If no baseline exists for this metric, show "no baseline" in 8-Wk Avg and Trend columns.]
+[Calendar live signal from A7: if a live calendar_meeting_load_pct was computed, render it as a row. Use the live value as Current. If baselines.json also has calendar_meeting_load_percent, show the 8-Wk Avg and Trend from baseline. The live value takes precedence over the baseline last_value for the Current column.]
 [Confluence signals from A6: render as rows in the table:]
 - Confluence pages authored/edited (30d) | [N] | [baseline or "no baseline"] | [trend or "-"] | 30d
 - Confluence comments (30d) | [M] | [baseline or "no baseline"] | [trend or "-"] | 30d

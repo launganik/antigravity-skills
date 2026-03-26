@@ -97,9 +97,47 @@ For each team member in config.json team array (iterate in order):
   - slack_response_latency_trend: trend in response latency in public channels (up/stable/down or normalized score)
 
   ### Calendar signals (if sources.calendar is true):
-  Query **this person's own calendar** using their email as calendarId (e.g., `gcal_list_events(calendarId="firstname.lastname@forto.com")`). If the person has an `email` field in config.json, use that. Otherwise, derive from their name: lowercase `firstname.lastname@forto.com`. Only include events with 2+ real participants that were accepted or tentatively accepted.
-  - calendar_meeting_load_pct: percentage of working hours in meetings this week
-  - calendar_focus_time_blocks_per_week: count of uninterrupted blocks >=90 minutes this week
+
+  **Step 1 - Determine calendarId:**
+  If the person has an `email` field in config.json, use that as calendarId. Otherwise, derive from their name: lowercase `firstname.lastname@{email_domain}` (email_domain from config.json, e.g., `forto.com`). Handle special characters by removing diacritics and non-ASCII characters.
+
+  **Step 2 - Query the person's calendar:**
+  Call `gcal_list_events` with these parameters:
+  - `calendarId`: the email from Step 1 (e.g., `"lahiru.jayamanna@forto.com"`)
+  - `timeMin`: 7 days ago at `T00:00:00` (e.g., `"2026-03-18T00:00:00"`)
+  - `timeMax`: today at `T23:59:59` (e.g., `"2026-03-25T23:59:59"`)
+  - `timeZone`: manager's timezone from config.json (e.g., `"Europe/Berlin"`)
+  - `maxResults`: 250
+  - `condenseEventDetails`: true
+
+  If the response contains a `nextPageToken`, call again with `pageToken` to get remaining events. Continue until all events are retrieved.
+
+  **Step 3 - Filter qualifying meetings:**
+  For each event in the response, include it ONLY if ALL of these conditions are true:
+  - `eventType` is `"default"` (exclude `workingLocation`, `outOfOffice`, `focusTime`)
+  - `numAttendees` >= 2
+  - `myResponseStatus` is `"accepted"` or `"tentative"` (exclude `"declined"`, `"needsAction"`, `"unknown"`, or missing)
+  - The event has `start.dateTime` and `end.dateTime` fields (exclude pure all-day events that only have `start.date`/`end.date`)
+  - The event duration is <= 480 minutes (8 hours). Events longer than 8 hours are multi-day placeholders (e.g., hackathons, conferences) and should be excluded from meeting load calculation
+
+  **Step 4 - Compute meeting minutes within working hours:**
+  Working hours window: 09:00 to 18:00 in the configured timezone, Monday-Friday only.
+  Total available working minutes = (number of weekdays in the 7-day window) x 9 hours x 60 minutes.
+
+  For each qualifying event:
+  1. Parse `start.dateTime` and `end.dateTime` into timestamps
+  2. Skip events that fall entirely on Saturday or Sunday
+  3. Clip the event start to 09:00 if it starts before 09:00
+  4. Clip the event end to 18:00 if it ends after 18:00
+  5. If clipped start >= clipped end, the event is entirely outside working hours - skip it
+  6. Compute `event_minutes = (clipped_end - clipped_start)` in minutes
+  7. Sum all event_minutes into `total_meeting_minutes`
+
+  **Step 5 - Compute meeting load percentage:**
+  `calendar_meeting_load_pct = (total_meeting_minutes / total_available_working_minutes) * 100`
+  Round to 1 decimal place.
+
+  Store this value as the calendar_meeting_load_pct signal for this person.
 
   Record all collected signal values as: { slug, metric_name, current_value, week_queried }
 

@@ -122,11 +122,11 @@ Once your connectors are active, follow the [Installation](#installation) steps 
 
 ```bash
 # Clone this repo into your project directory
-git clone https://github.com/your-org/antigravity-skills .
+git clone https://github.com/your-org/engineering-manager-skill .
 
 # Or copy just the skill files into an existing project
-cp -r /path/to/antigravity-skills/.claude ./
-cp /path/to/antigravity-skills/SKILL.md ./
+cp -r /path/to/engineering-manager-skill/.claude ./
+cp /path/to/engineering-manager-skill/SKILL.md ./
 ```
 
 ### Step 2 - Verify the files are in place
@@ -344,8 +344,8 @@ The `.team-health/` directory is gitignored automatically during setup. The `.cl
 Pull updated skill files over the existing ones. Your `.team-health/` data is unaffected.
 
 ```bash
-cp -r /path/to/updated-antigravity-skills/.claude/commands/team-health/ .claude/commands/team-health/
-cp -r /path/to/updated-antigravity-skills/.claude/team-health/ .claude/team-health/
+cp -r /path/to/updated-engineering-manager-skill/.claude/commands/team-health/ .claude/commands/team-health/
+cp -r /path/to/updated-engineering-manager-skill/.claude/team-health/ .claude/team-health/
 ```
 
 ## Uninstalling
