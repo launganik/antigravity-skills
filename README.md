@@ -118,57 +118,11 @@ Once your connectors are active, follow the [Installation](#installation) steps 
 
 ## Installation
 
-There are two ways to install: as a **plugin** (recommended) or by **cloning the repo** manually.
+There are two ways to install: by **cloning the repo** or as a **plugin** (if you have access to a Claude marketplace).
 
-### Option A: Plugin install (recommended)
+### Option A: Manual install (clone this repo)
 
-The plugin gives you all commands globally — no files copied into your project, no git pollution, and automatic MCP server prompts.
-
-**Forto engineers** already have the marketplace configured. Just install the plugin:
-
-```bash
-claude plugin install engineering-manager-skills@forto-marketplace
-```
-
-That's it. All `/team-health:*` commands are available immediately in any project directory. MCP servers (GitHub, Atlassian, Slack, Calendar) will prompt for approval on first use.
-
-**External users** need to add the marketplace first, then install:
-
-```bash
-# Add the marketplace (one-time)
-claude plugin marketplace add freight-hub/claude-marketplace
-
-# Install the plugin
-claude plugin install engineering-manager-skills@forto-marketplace
-```
-
-Then run first-time setup inside Claude Code:
-
-```
-/team-health:setup
-```
-
-You can also test locally without installing:
-
-```bash
-claude --plugin-dir /path/to/plugins/engineering-manager-skills
-```
-
-**Why plugin over manual install?**
-
-| | Plugin | Manual clone |
-|---|---|---|
-| Install | One command | Clone repo, copy files into each project |
-| Scope | Works globally across all projects | Only in the directory where you copied files |
-| Updates | Re-install to pick up new versions | Manual `cp -r` of updated files |
-| MCP servers | Auto-prompted via bundled config | Manual `claude mcp add` for each one |
-| Project repo | Zero files added | Adds `.claude/` dirs and `SKILL.md` |
-
----
-
-### Option B: Manual install (clone this repo)
-
-Use this if you want to customize the skill files or can't use the marketplace.
+Use this if you want to get started quickly, customize the skill files, or don't have access to a marketplace.
 
 #### Step 1 - Copy the skill files into your project
 
@@ -212,6 +166,52 @@ cat .team-health/config.json
 grep ".team-health" .gitignore
 # Should show: .team-health/
 ```
+
+---
+
+### Option B: Plugin install
+
+The plugin gives you all commands globally — no files copied into your project, no git pollution, and automatic MCP server prompts.
+
+**Forto engineers** already have the marketplace configured. Just install the plugin:
+
+```bash
+claude plugin install engineering-manager-skills@forto-marketplace
+```
+
+That's it. All `/team-health:*` commands are available immediately in any project directory. MCP servers (GitHub, Atlassian, Slack, Calendar) will prompt for approval on first use.
+
+**External users** need to add the marketplace first, then install:
+
+```bash
+# Add the marketplace (one-time)
+claude plugin marketplace add freight-hub/claude-marketplace
+
+# Install the plugin
+claude plugin install engineering-manager-skills@forto-marketplace
+```
+
+Then run first-time setup inside Claude Code:
+
+```
+/team-health:setup
+```
+
+You can also test locally without installing:
+
+```bash
+claude --plugin-dir /path/to/plugins/engineering-manager-skills
+```
+
+**Why plugin over manual install?**
+
+| | Plugin | Manual clone |
+|---|---|---|
+| Install | One command | Clone repo, copy files into each project |
+| Scope | Works globally across all projects | Only in the directory where you copied files |
+| Updates | Re-install to pick up new versions | Manual `cp -r` of updated files |
+| MCP servers | Auto-prompted via bundled config | Manual `claude mcp add` for each one |
+| Project repo | Zero files added | Adds `.claude/` dirs and `SKILL.md` |
 
 ---
 
